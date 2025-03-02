@@ -1,0 +1,10 @@
+[[inputs.socket_listener]]
+service_address = "udp://:8089"
+
+[[outputs.prometheus_client]]
+## Address to listen on
+listen = ":9100"  # Port Prometheus will scrape
+
+## Metrics path that Prometheus will scrape
+path = "/metrics"
+

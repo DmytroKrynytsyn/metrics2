@@ -1,0 +1,16 @@
+[[outputs.socket_writer]]
+  address = "udp://{{telegraf_gateway_ip}}:8089"
+
+[[inputs.cpu]]  
+  percpu = true
+  totalcpu = true
+  collect_cpu_time = false
+
+[[inputs.mem]]
+[[inputs.disk]]
+[[inputs.swap]]
+[[inputs.system]]
+[[inputs.processes]]
+[[inputs.kernel]]
+[[inputs.diskio]]
+[[inputs.netstat]]

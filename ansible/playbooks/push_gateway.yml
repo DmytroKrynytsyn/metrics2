@@ -1,0 +1,64 @@
+---
+- name: Install Push Gateway
+  hosts: push_gateway
+  become: yes
+  vars:
+
+  tasks:
+
+    - name: Create pushgateway user and group
+      ansible.builtin.user:
+        name: pushgateway
+        system: yes
+        shell: /bin/false
+        create_home: no
+
+    - name: Download Pushgateway binary
+      ansible.builtin.get_url:
+        url: "https://github.com/prometheus/pushgateway/releases/download/v1.2.0/pushgateway-1.2.0.linux-amd64.tar.gz"
+        dest: "/tmp/pushgateway.tar.gz"
+        mode: '0644'
+
+    - name: Extract Pushgateway binary
+      ansible.builtin.unarchive:
+        src: "/tmp/pushgateway.tar.gz"
+        dest: "/tmp/"
+        remote_src: yes
+
+    - name: Move Pushgateway binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: "/tmp/pushgateway-1.2.0.linux-amd64/pushgateway"
+        dest: "/usr/local/bin/pushgateway"
+        owner: pushgateway
+        group: pushgateway
+        mode: '0755'
+        remote_src: yes
+
+    - name: Create systemd service file for Pushgateway
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/pushgateway.service"
+        content: |
+          [Unit]
+          Description=Prometheus Pushgateway
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User=pushgateway
+          Group=pushgateway
+          Type=simple
+          ExecStart=/usr/local/bin/pushgateway
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Reload systemd to apply changes
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Pushgateway service
+      ansible.builtin.systemd:
+        name: pushgateway
+        enabled: yes
+        state: started

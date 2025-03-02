@@ -1,0 +1,31 @@
+---
+- name: Install Telegraf Gateway
+  hosts: telegraf_gateway
+  become: yes
+  vars:
+
+  tasks:
+    - name: Add InfluxData repository Gateway
+      ansible.builtin.yum_repository:
+        name: influxdata
+        description: InfluxData Repository
+        baseurl: https://repos.influxdata.com/stable/$basearch/main
+        enabled: yes
+        gpgcheck: no
+
+    - name: Install Telegraf Gateway
+      yum:
+        name: telegraf
+        state: present
+
+    - name: Configure Telegraf Gateway
+      template:
+        src: "../configs/telegraf_gateway.conf.j2"
+        mode: '0644'
+        dest: "/etc/telegraf/telegraf.conf"
+
+    - name: Start and enable Telegraf Gateway service
+      systemd:
+        name: telegraf
+        state: started
+        enabled: yes
