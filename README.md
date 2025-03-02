@@ -1,4 +1,5 @@
-# Linux server monitoring: Grafana + Prometheus + Telegraf
+# Linux server monitoring: 
+# Grafana + Prometheus + Telegraf
 
 Telegraf’s push model reduces the load on the Prometheus server by offloading metric collection to Telegraf instances, improving scalability. 
 It simplifies network configurations, especially in dynamic environments, and avoids the complexity of managing multiple Prometheus scrape jobs. 
